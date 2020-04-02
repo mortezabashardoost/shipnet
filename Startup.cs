@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Shipnet.Filters;
 
 namespace Shipnet
 {
@@ -27,10 +28,12 @@ namespace Shipnet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddNewtonsoftJson(options => {
+            services.AddControllers(options => {
+                // adding customized Exception Serilizer Filter
+                options.Filters.Add<JsonExceptionFilter>(); 
+            }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+            });
             services.AddRouting(options => options.LowercaseUrls = true);
             
             // Adding Swagger document and configure it
