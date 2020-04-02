@@ -12,11 +12,16 @@ namespace Shipnet.Controllers
     public class RootController : ControllerBase
     {
         [HttpGet(Name =nameof(GetRoot))]
+        [ProducesResponseType(200)]
         public IActionResult GetRoot()
         {
             var response = new
             {
-                href = Url.Link(nameof(GetRoot),null)
+                href = Url.Link(nameof(GetRoot),null),
+                customers = new
+                {
+                    href = Url.Link(nameof(CustomersController.GetCustomers),null)
+                }
             };
             return Ok(response);
         }
