@@ -29,8 +29,10 @@ namespace Shipnet
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options => {
+                
                 // adding customized Exception Serilizer Filter
                 options.Filters.Add<JsonExceptionFilter>(); 
+            
             }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
