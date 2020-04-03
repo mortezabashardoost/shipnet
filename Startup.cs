@@ -16,6 +16,8 @@ using Shipnet.Data;
 using Shipnet.Filters;
 using Shipnet.Models.Resources;
 using Microsoft.EntityFrameworkCore;
+using Shipnet.Contracts;
+using Shipnet.Services;
 
 namespace Shipnet
 {
@@ -42,6 +44,9 @@ namespace Shipnet
             }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
+
+            // Service Mappings
+            services.AddScoped<ICustomerService, CustomerService>();
 
             // Adding in-memory database for quick development
             services.AddDbContext<ShipnetDbContext>(options => options.UseInMemoryDatabase("shipnet"));

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shipnet.Contracts;
 using Shipnet.Data;
 using Shipnet.Models.Resources;
 
@@ -14,11 +15,11 @@ namespace Shipnet.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ShipnetDbContext context;
+        private readonly ICustomerService customerService;
 
-        public CustomersController(ShipnetDbContext context)
+        public CustomersController(ICustomerService customerService)
         {
-            this.context = context;
+            this.customerService = customerService;
         }
 
         [HttpGet(Name =nameof(GetAllCustomers))]
@@ -33,21 +34,14 @@ namespace Shipnet.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<Customer>> GetCustomerById(long customerId)
         {
-            var foundCustomer = await context.Customers.SingleOrDefaultAsync(c => c.CustomerId == customerId);
+            var customer = await customerService.GetCustomerByIdAsync(customerId);
 
-            if (foundCustomer == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            var resource = new Customer
-            {
-                Href = Url.Link(nameof(GetCustomerById), new { customerId = foundCustomer.CustomerId }),
-                CustomerName = foundCustomer.CustomerName,
-                MobileNo = foundCustomer.MobileNo
-            };
-
-            return Ok(resource);
+            return Ok(customer);
         }
     }
 }
