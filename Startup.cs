@@ -31,11 +31,29 @@ namespace Shipnet
             services.AddControllers(options => {
                 
                 // adding customized Exception Serilizer Filter
-                options.Filters.Add<JsonExceptionFilter>(); 
+                options.Filters.Add<JsonExceptionFilter>();
+
+                // adding filter to prevent user to access using http
+                options.Filters.Add<RequireHttpsOrCloseAttribute>();
             
             }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
+
+            // Adding CORS policies
+            services.AddCors(options => {
+                
+                // CORS policy for Dev environment
+                options.AddPolicy("DevelopmentCors", policy => {
+                    policy.AllowAnyOrigin();
+                });
+
+                // CORS policy for Production environment
+                options.AddPolicy("ProductionCors", policy => {
+                    policy.WithOrigins("www.production.com");
+                });
+            });
+
             services.AddRouting(options => options.LowercaseUrls = true);
             
             // Adding Swagger document and configure it
@@ -72,9 +90,20 @@ namespace Shipnet
                 // Use Swager in development mode only
                 app.UseOpenApi();
                 app.UseSwaggerUi3();
+
+                // Enable CORS for Development
+                app.UseCors("DevelopmentCors");
+            }
+            else
+            {
+                app.UseHsts();
+
+                // Enable CORS for Production
+                app.UseCors("ProductionCors");
             }
 
-            app.UseHttpsRedirection();
+            // Disabled below line due to using RequireHttpsOrCloseAttribute Filter
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
