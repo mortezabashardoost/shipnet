@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Shipnet.Filters;
+using Shipnet.Models.Resources;
 
 namespace Shipnet
 {
@@ -78,6 +79,11 @@ namespace Shipnet
                     };
                 };
             });
+
+            // Reading Info section from appsettings.json
+            services.Configure<ConfigInfo>(Configuration.GetSection("Info"));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

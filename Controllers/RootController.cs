@@ -21,6 +21,10 @@ namespace Shipnet.Controllers
                 customers = new
                 {
                     href = Url.Link(nameof(CustomersController.GetCustomers),null)
+                },
+                info = new
+                {
+                    href = Url.Link(nameof(InfoController.GetInfo),null)
                 }
             };
             return Ok(response);
