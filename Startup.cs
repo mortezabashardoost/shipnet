@@ -12,8 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Shipnet.Data;
 using Shipnet.Filters;
 using Shipnet.Models.Resources;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shipnet
 {
@@ -40,6 +42,10 @@ namespace Shipnet
             }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
+
+            // Adding in-memory database for quick development
+            services.AddDbContext<ShipnetDbContext>(options => options.UseInMemoryDatabase("shipnet"));
+
 
             // Adding CORS policies
             services.AddCors(options => {
