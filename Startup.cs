@@ -33,6 +33,7 @@ namespace Shipnet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddControllers(options => {
                 
                 // adding customized Exception Serilizer Filter
@@ -45,11 +46,21 @@ namespace Shipnet
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
+            
+            
             // Service Mappings
             services.AddScoped<ICustomerService, CustomerService>();
 
+
+
+            // Application Database
+            // Switch between in-memory and mssql databases by comment/uncommenting following options:
+
             // Adding in-memory database for quick development
-            services.AddDbContext<ShipnetDbContext>(options => options.UseInMemoryDatabase("shipnet"));
+            // services.AddDbContext<ShipnetDbContext>(options => options.UseInMemoryDatabase("shipnet"));
+
+            // Adding MSSQL database
+            services.AddDbContext<ShipnetDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DevDb")));
 
 
             // Adding CORS policies
@@ -66,7 +77,7 @@ namespace Shipnet
                 });
             });
 
-            services.AddRouting(options => options.LowercaseUrls = true);
+            
             
             // Adding Swagger document and configure it
             services.AddSwaggerDocument(config =>
@@ -94,6 +105,8 @@ namespace Shipnet
             // Reading Info section from appsettings.json
             services.Configure<ConfigInfo>(Configuration.GetSection("Info"));
 
+
+            services.AddRouting(options => options.LowercaseUrls = true);
 
         }
 
