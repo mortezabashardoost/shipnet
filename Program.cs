@@ -17,7 +17,10 @@ namespace Shipnet
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
-            InitializeDatabase(host);
+            
+            // Initialize data to In-Memory database
+            // InitializeDatabase(host);
+            
             host.Run();
         }
 
@@ -27,18 +30,16 @@ namespace Shipnet
 
         public static void InitializeDatabase(IWebHost host)
         {
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            try
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    SeedData.InitializeAsync(services).Wait();
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the database.");
-                }
+                SeedData.InitializeAsync(services).Wait();
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the database.");
             }
         }
 

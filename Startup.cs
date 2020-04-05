@@ -18,6 +18,8 @@ using Shipnet.Models.Resources;
 using Microsoft.EntityFrameworkCore;
 using Shipnet.Contracts;
 using Shipnet.Services;
+using AutoMapper;
+using Shipnet.Infrastructure;
 
 namespace Shipnet
 {
@@ -41,16 +43,21 @@ namespace Shipnet
 
                 // adding filter to prevent user to access using http
                 options.Filters.Add<RequireHttpsOrCloseAttribute>();
+
+                // adding Link Rewriting filter
+                options.Filters.Add<LinkRewritingFilter>();
             
             }).AddNewtonsoftJson(options => {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
-
-            
+          
             
             // Service Mappings
             services.AddScoped<ICustomerService, CustomerService>();
 
+
+            // Adding Automapper profile
+            services.AddAutoMapper(options => options.AddProfile<MappingProfile>(),typeof(Startup));
 
 
             // Application Database

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shipnet.Contracts;
 using Shipnet.Data;
 using Shipnet.Models.Resources;
@@ -12,10 +13,12 @@ namespace Shipnet.Services
     public class CustomerService : ICustomerService
     {
         private readonly ShipnetDbContext context;
+        private readonly IMapper mapper;
 
-        public CustomerService(ShipnetDbContext context)
+        public CustomerService(ShipnetDbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
         public async Task<Customer> GetCustomerByIdAsync(long id)
         {
@@ -26,12 +29,7 @@ namespace Shipnet.Services
                 return null;
             }
 
-            return new Customer
-            {
-                Href = null,
-                CustomerName = foundCustomer.CustomerName,
-                MobileNo = foundCustomer.MobileNo
-            };
+            return mapper.Map<Customer>(foundCustomer);
 
         }
     }
